@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import se.nixonmc.duels.core.DuelsCore;
 import se.nixonmc.duels.core.module.DuelsModule;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,6 +16,7 @@ public final class ExampleModule implements DuelsModule {
 
     private final Map<UUID, ExampleDuel> duels = new HashMap<>();
     private final Map<UUID, ExampleDuel> playerDuels = new HashMap<>();
+
 
     public ExampleModule(DuelsCore core) {
         this.core = core;

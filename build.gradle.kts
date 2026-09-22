@@ -6,10 +6,12 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.onarandombox.com/content/groups/public/")
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:26.3.build.+")
+    compileOnly("org.mvplugins.multiverse.core:multiverse-core:5.8.0")
 }
 
 java {

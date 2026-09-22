@@ -9,6 +9,7 @@ import se.nixonmc.duels.core.permission.PermissionManager;
 import se.nixonmc.duels.core.player.PlayerManager;
 import se.nixonmc.duels.core.storage.StorageManager;
 import se.nixonmc.duels.core.task.TaskManager;
+import se.nixonmc.duels.modules.ArenaSystem.ArenaManager;
 import se.nixonmc.duels.modules.example.ExampleModule;
 
 public final class DuelsCore {
@@ -23,6 +24,8 @@ public final class DuelsCore {
     private final EventManager eventManager;
     private final PermissionManager permissionManager;
     private final StorageManager storageManager;
+    private final ArenaManager arenaManager;
+
 
     public DuelsCore(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -35,6 +38,7 @@ public final class DuelsCore {
         this.permissionManager = new PermissionManager();
         this.storageManager = new StorageManager(this);
         this.moduleManager = new ModuleManager(this);
+        this.arenaManager = new ArenaManager(this);
 
         moduleManager.register(new ExampleModule(this));
     }
