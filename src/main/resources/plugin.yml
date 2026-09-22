@@ -1,0 +1,11 @@
+name: Duels
+prefix: Duel
+version: '${version}'
+
+main: se.nixonmc.duels.Main
+api-version: '26.3'
+load: POSTWORLD
+
+authors:
+  - "Nordiumm"
+  - "KungChuck"

@@ -1,0 +1,8 @@
+debug: false
+
+modules:
+  duel: true
+  arena: true
+  kit: true
+  queue: true
+  stats: true

@@ -1,0 +1,12 @@
+prefix: "<gray>[<aqua>Duels</aqua>]</gray> "
+
+general:
+  no-permission: "<red>You don't have permission to do that."
+  player-only: "<red>Only players can use this command."
+  player-not-found: "<red>That player could not be found."
+
+duel:
+  already-in-duel: "<red>You are already in a duel."
+  not-in-duel: "<red>You are not in a duel."
+  started: "<green>Your duel has started!"
+  finished: "<yellow>Your duel has ended."
