@@ -77,6 +77,26 @@ public class DuelCommand implements CommandExecutor {
             return true;
         }
 
+        if (args.length == 1) {
+            Player target = core.getPlugin().getServer().getPlayerExact(args[0]);
+
+            if (target == null) {
+                core.getMessageManager().send(
+                        player,
+                        "general.player-not-found"
+                );
+                return true;
+            }
+
+            if (target.getUniqueId().equals(player.getUniqueId())) {
+                core.getMessageManager().send(
+                        player,
+                        "duel.cannot-duel-self"
+                );
+                return true;
+            }
+        }
+
         return true;
     }
 }
