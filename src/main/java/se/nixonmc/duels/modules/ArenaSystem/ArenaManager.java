@@ -34,7 +34,15 @@ public class ArenaManager {
     }
 
 
+    public Arena getAvailableArena() {
+        for (Arena arena : arenas.values()) {
+            if (arena.isAvailable()) {
+                return arena;
+            }
+        }
 
+        return null;
+    }
 
 
     public void removeArena(Arena arena) {

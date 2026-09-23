@@ -27,6 +27,10 @@ public class Arena {
         this.player2Spawn = player2Spawn;
     }
 
+    public boolean isAvailable() {
+        return player1 == null && player2 == null;
+    }
+
     public World getWorld() {
         return world;
     }
