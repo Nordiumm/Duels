@@ -9,3 +9,8 @@ load: POSTWORLD
 authors:
   - "Nordiumm"
   - "KungChuck"
+
+commands:
+  duel:
+    description: Duel
+    usage: /duel <player|accept|deny>

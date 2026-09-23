@@ -11,7 +11,11 @@ public class DuelModule implements DuelsModule {
         this.core = core;
 
         DuelManager duelManager = new DuelManager();
-        this.duelSystem = new DuelSystem(duelManager);
+        DuelRequestManager requestManager = new DuelRequestManager();
+        this.duelSystem = new DuelSystem(
+                duelManager,
+                requestManager
+        );
     }
 
     @Override
@@ -24,6 +28,10 @@ public class DuelModule implements DuelsModule {
         core.getPlugin().getLogger().info(
                 "Duel module enabled!"
         );
+
+        core.getPlugin().getCommand("duel").setExecutor(
+                new DuelCommand(core, duelSystem)
+        );
     }
 
     @Override
@@ -31,5 +39,9 @@ public class DuelModule implements DuelsModule {
         core.getPlugin().getLogger().info(
                 "Duel module disabled!"
         );
+    }
+
+    public DuelSystem getDuelSystem() {
+        return duelSystem;
     }
 }
