@@ -1,17 +1,22 @@
 package se.nixonmc.duels.modules.duel;
 
+import se.nixonmc.duels.modules.kit.KitSystem;
+
 import java.util.UUID;
 
 public class DuelSystem {
     private final DuelManager duelManager;
     private final DuelRequestManager requestManager;
+    private final KitSystem kitSystem;
 
     public DuelSystem(
             DuelManager duelManager,
-            DuelRequestManager requestManager
+            DuelRequestManager requestManager,
+            KitSystem kitSystem
     ) {
         this.duelManager = duelManager;
         this.requestManager = requestManager;
+        this.kitSystem = kitSystem;
     }
 
     public Duel createDuel() {

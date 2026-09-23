@@ -2,6 +2,7 @@ package se.nixonmc.duels.modules.duel;
 
 import se.nixonmc.duels.core.DuelsCore;
 import se.nixonmc.duels.core.module.DuelsModule;
+import se.nixonmc.duels.modules.kit.KitSystem;
 
 public class DuelModule implements DuelsModule {
     private final DuelSystem duelSystem;
@@ -12,9 +13,12 @@ public class DuelModule implements DuelsModule {
 
         DuelManager duelManager = new DuelManager();
         DuelRequestManager requestManager = new DuelRequestManager();
+        KitSystem kitSystem = new KitSystem();
+
         this.duelSystem = new DuelSystem(
                 duelManager,
-                requestManager
+                requestManager,
+                kitSystem
         );
     }
 
