@@ -11,7 +11,7 @@ duel:
   started: "<green>Your duel has started!"
   finished: "<yellow>Your duel has ended."
   request-sent: "<green>Duel request sent to <player>."
-  request-received: "<yellow><player> has challenged you to a duel!"
+  request-received: "<yellow><player> has challenged you to a <kit> duel! <accept> <deny>"
   request-accepted: "<green>You accepted the duel request."
   request-denied: "<yellow>You denied the duel request."
   no-request: "<red>You don't have a pending duel request."

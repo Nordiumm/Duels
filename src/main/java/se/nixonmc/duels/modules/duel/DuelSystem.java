@@ -1,5 +1,6 @@
 package se.nixonmc.duels.modules.duel;
 
+import se.nixonmc.duels.modules.kit.Kit;
 import se.nixonmc.duels.modules.kit.KitSystem;
 
 import java.util.UUID;
@@ -39,7 +40,9 @@ public class DuelSystem {
 
         return duel;
     }
-
+    public Kit getKit(String id) {
+        return kitSystem.getKitManager().getKit(id);
+    }
     public boolean denyRequest(UUID target) {
         return requestManager.denyRequest(target);
     }
@@ -69,7 +72,4 @@ public class DuelSystem {
     public void removeDuel(Duel duel) {
         duelManager.removeDuel(duel);
     }
-
-
-
 }
