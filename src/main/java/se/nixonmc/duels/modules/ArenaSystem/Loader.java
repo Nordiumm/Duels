@@ -78,7 +78,7 @@ public class Loader {
                     player2Location
             );
 
-            manager.arenas.put(arenaId, arena);
+            manager.arenaDefinitions.put(arenaId, arena);
 
             Bukkit.getLogger().info("Loaded arena: " + arenaId
             );
