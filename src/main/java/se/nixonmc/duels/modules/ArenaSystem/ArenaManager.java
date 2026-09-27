@@ -93,10 +93,12 @@ public class ArenaManager {
         occupiedArenas.remove(arena);
     }
 
-    public Arena getAvailableArena() {
+    public Arena getAvailableArena(String arenaName) {
         for (Arena arena : arenas.values()) {
-            if (arena.isAvailable()) {
-                return arena;
+            if(arena.getWorld().getName().equals(arenaName)){
+                if (arena.isAvailable()) {
+                    return arena;
+                }
             }
         }
 
