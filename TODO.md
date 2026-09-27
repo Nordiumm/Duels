@@ -25,6 +25,7 @@
 - [x] Kit
 - [ ] KitManager - **IN PROGRESS**
 - [ ] KitSystem - **IN PROGRESS**
+- [ ] Preset Kits - **IN PROGRESS**
 - [ ] Kit Editor
 
 ## Queue
