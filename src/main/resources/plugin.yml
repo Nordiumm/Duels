@@ -17,3 +17,7 @@ commands:
   testkit:
     description: Test a duel kit
     usage: /testkit <kit>
+  arena:
+    description: Arena management commands
+    usage: /arena <create|setspawn1|setspawn2|save|cancel>
+    permission: duels.arena
