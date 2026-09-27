@@ -2,19 +2,24 @@ package se.nixonmc.duels.modules.duel;
 
 import se.nixonmc.duels.core.DuelsCore;
 import se.nixonmc.duels.core.module.DuelsModule;
+import se.nixonmc.duels.modules.ArenaSystem.ArenaCreatorCommands;
+import se.nixonmc.duels.modules.ArenaSystem.ArenaManager;
 import se.nixonmc.duels.modules.kit.KitSystem;
 import se.nixonmc.duels.modules.kit.KitTestCommand;
 
 public class DuelModule implements DuelsModule {
+
     private final DuelSystem duelSystem;
     private final DuelsCore core;
     private final KitSystem kitSystem;
+    private ArenaManager arenaManager;
 
     public DuelModule(DuelsCore core) {
         this.core = core;
 
         DuelManager duelManager = new DuelManager();
         DuelRequestManager requestManager = new DuelRequestManager();
+
         kitSystem = new KitSystem();
 
         this.duelSystem = new DuelSystem(
@@ -31,6 +36,8 @@ public class DuelModule implements DuelsModule {
 
     @Override
     public void enable() {
+        arenaManager = new ArenaManager(core);
+
         core.getPlugin().getLogger().info(
                 "Duel module enabled!"
         );
@@ -38,8 +45,13 @@ public class DuelModule implements DuelsModule {
         core.getPlugin().getCommand("duel").setExecutor(
                 new DuelCommand(core, duelSystem)
         );
+
         core.getPlugin().getCommand("testkit").setExecutor(
                 new KitTestCommand(kitSystem)
+        );
+
+        core.getPlugin().getCommand("arena").setExecutor(
+                new ArenaCreatorCommands(arenaManager, core)
         );
     }
 
