@@ -25,7 +25,7 @@ import java.util.HashMap;
 public class ArenaManager {
 
     private final DuelsCore core;
-    private final MultiverseCoreApi multiverseCore = MultiverseCoreApi.get();;
+    private final MultiverseCoreApi multiverseCore = MultiverseCoreApi.get();
     public final Map<String, Arena> arenaDefinitions = new HashMap<>();
 
 

@@ -172,6 +172,14 @@ public class ArenaCreatorCommands implements CommandExecutor {
                 return true;
             }
 
+            case "list" -> {
+                player.sendMessage(
+                        "§aArena defaults: " + arenaManager.arenaDefinitions.keySet()
+                );
+
+                return true;
+            }
+
             case "save" -> {
 
                 ArenaCreation creation =
