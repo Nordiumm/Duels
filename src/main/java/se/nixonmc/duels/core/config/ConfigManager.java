@@ -23,6 +23,7 @@ public final class ConfigManager {
     public void load() {
         load("config.yml");
         load("messages.yml");
+        load("arenas.yml");
     }
 
     public FileConfiguration load(String fileName) {
