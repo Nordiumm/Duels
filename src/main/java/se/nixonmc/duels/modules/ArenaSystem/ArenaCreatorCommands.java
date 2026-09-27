@@ -173,9 +173,11 @@ public class ArenaCreatorCommands implements CommandExecutor {
             }
 
             case "list" -> {
-                player.sendMessage(
-                        "§aArena defaults: " + arenaManager.arenaDefinitions.keySet()
-                );
+                player.sendMessage("§aAntal arenor: " + arenaManager.arenaDefinitions.size());
+
+                for (String arenaId : arenaManager.arenaDefinitions.keySet()) {
+                    player.sendMessage("§eArena: §f" + arenaId);
+                }
 
                 return true;
             }
