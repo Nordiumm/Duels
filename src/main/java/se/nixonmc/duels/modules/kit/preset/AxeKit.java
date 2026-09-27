@@ -11,7 +11,8 @@ public class AxeKit extends Kit {
                 "Axe",
                 createContents(),
                 createArmor(),
-                createOffhand()
+                createOffhand(),
+                new ItemStack(Material.DIAMOND_AXE)
         );
     }
     private static ItemStack[] createContents() {

@@ -10,10 +10,16 @@ public class DuelCommand implements CommandExecutor {
 
     private final DuelsCore core;
     private final DuelSystem duelSystem;
+    private final DuelKitMenu kitMenu;
 
-    public DuelCommand(DuelsCore core, DuelSystem duelSystem) {
+    public DuelCommand(
+            DuelsCore core,
+            DuelSystem duelSystem,
+            DuelKitMenu kitMenu
+    ) {
         this.core = core;
         this.duelSystem = duelSystem;
+        this.kitMenu = kitMenu;
     }
 
     @Override
@@ -95,6 +101,8 @@ public class DuelCommand implements CommandExecutor {
                 );
                 return true;
             }
+
+            kitMenu.open(player);
         }
 
         return true;
