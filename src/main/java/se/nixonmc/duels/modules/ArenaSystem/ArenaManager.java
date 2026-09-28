@@ -3,6 +3,7 @@ package se.nixonmc.duels.modules.ArenaSystem;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 
+import org.bukkit.entity.Player;
 import org.mvplugins.multiverse.core.MultiverseCoreApi;
 
 import org.mvplugins.multiverse.core.world.LoadedMultiverseWorld;
@@ -67,31 +68,84 @@ public class ArenaManager {
 
     }
 
-    public void DeleteArena(Arena arena){
+    public void DeleteArena(Arena arena) {
+        if (arena == null || arena.getWorld() == null) {
+            return;
+        }
+
+        World bukkitWorld = arena.getWorld();
+        String worldName = bukkitWorld.getName();
+
         MultiverseWorld mvWorld = multiverseCore.getWorldManager()
-                .getWorld(arena.getWorld())
+                .getWorld(bukkitWorld)
                 .getOrElseThrow(() -> new IllegalStateException(
-                        "Template world is not managed by Multiverse"
+                        "Arena world is not managed by Multiverse: " + worldName
                 ));
 
+        /*
+         * Make sure nobody is still inside the arena.
+         */
+        for (Player player : new ArrayList<>(bukkitWorld.getPlayers())) {
+            World fallback = Bukkit.getWorlds().get(0);
 
-        var result = multiverseCore.getWorldManager().unloadWorld(
-                UnloadWorldOptions
-                        .world((LoadedMultiverseWorld) mvWorld)
-                        .saveBukkitWorld(false)
-        );
+            if (fallback != null) {
+                player.teleport(fallback.getSpawnLocation());
+            }
+        }
 
-        var result_ = multiverseCore.getWorldManager().deleteWorld(
+        /*
+         * Unload the world first.
+         */
+        if (mvWorld instanceof LoadedMultiverseWorld loadedWorld) {
+
+            var unloadResult = multiverseCore.getWorldManager().unloadWorld(
+                    UnloadWorldOptions
+                            .world(loadedWorld)
+                            .saveBukkitWorld(false)
+            );
+
+            if (unloadResult.isFailure()) {
+                Bukkit.getLogger().severe(
+                        "[Duels] Failed to unload arena world: " + worldName
+                );
+
+                Bukkit.getLogger().severe(
+                        "[Duels] Result: " + unloadResult
+                );
+
+                return;
+            }
+
+            Bukkit.getLogger().info(
+                    "[Duels] Unloaded arena world: " + worldName
+            );
+        }
+
+        /*
+         * Now delete it.
+         */
+        var deleteResult = multiverseCore.getWorldManager().deleteWorld(
                 DeleteWorldOptions.world(mvWorld)
         );
 
-        if (result_.isSuccess()) {
-            System.out.println("Arena world deleted: " + mvWorld.getName());
-        } else {
-            System.out.println("Failed to delete arena world: " + result);
-        }
+        if (deleteResult.isSuccess()) {
 
-        occupiedArenas.remove(arena);
+            Bukkit.getLogger().info(
+                    "[Duels] Arena world deleted: " + worldName
+            );
+
+            occupiedArenas.remove(arena);
+
+        } else {
+
+            Bukkit.getLogger().severe(
+                    "[Duels] Failed to delete arena world: " + worldName
+            );
+
+            Bukkit.getLogger().severe(
+                    "[Duels] Delete result: " + deleteResult
+            );
+        }
     }
 
     public Arena getAvailableArena(String arenaName) {
