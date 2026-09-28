@@ -1,5 +1,10 @@
 package se.nixonmc.duels.modules.duel;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import se.nixonmc.duels.modules.ArenaSystem.Arena;
+import se.nixonmc.duels.modules.ArenaSystem.ArenaManager;
 import se.nixonmc.duels.modules.kit.Kit;
 import se.nixonmc.duels.modules.kit.KitSystem;
 
@@ -10,19 +15,26 @@ public class DuelSystem {
     private final DuelManager duelManager;
     private final DuelRequestManager requestManager;
     private final KitSystem kitSystem;
+    private final ArenaManager arenaManager;
 
     public DuelSystem(
             DuelManager duelManager,
             DuelRequestManager requestManager,
-            KitSystem kitSystem
+            KitSystem kitSystem,
+            ArenaManager arenaManager
     ) {
         this.duelManager = duelManager;
         this.requestManager = requestManager;
         this.kitSystem = kitSystem;
+        this.arenaManager = arenaManager;
     }
 
-    public Duel createDuel() {
-        return duelManager.createDuel();
+    public Duel createDuel(Arena arena) {
+        return duelManager.createDuel(arena);
+    }
+
+    public Duel getDuel(UUID playerId) {
+        return duelManager.findDuel(playerId);
     }
 
     public Duel acceptRequest(UUID target) {
@@ -32,10 +44,50 @@ public class DuelSystem {
             return null;
         }
 
-        Duel duel = createDuel();
+        Player sender = Bukkit.getPlayer(request.getSender());
+        Player receiver = Bukkit.getPlayer(request.getTarget());
 
-        addPlayerToDuel(duel, request.getSender());
-        addPlayerToDuel(duel, request.getTarget());
+        if (sender == null || receiver == null) {
+            return null;
+        }
+
+        if (duelManager.isInDuel(sender.getUniqueId())
+                || duelManager.isInDuel(receiver.getUniqueId())) {
+            return null;
+        }
+
+        Kit kit = getKit(request.getKit());
+
+        if (kit == null) {
+            return null;
+        }
+
+        Arena arena = arenaManager.getAvailableArena(request.getMap());
+
+        if (arena == null) {
+            return null;
+        }
+
+        arena.SetPlayers(sender, receiver);
+
+        Duel duel = createDuel(arena);
+
+        addPlayerToDuel(duel, sender.getUniqueId());
+        addPlayerToDuel(duel, receiver.getUniqueId());
+
+        Location senderSpawn = arena.getPlayer1Spawn().clone();
+        senderSpawn.setWorld(arena.getWorld());
+
+        Location receiverSpawn = arena.getPlayer2Spawn().clone();
+        receiverSpawn.setWorld(arena.getWorld());
+
+        sender.teleport(senderSpawn);
+        receiver.teleport(receiverSpawn);
+
+        kitSystem.applyKit(sender, kit);
+        kitSystem.applyKit(receiver, kit);
+
+        startDuel(duel);
 
         requestManager.cancelRequestsFromSender(request.getSender());
         requestManager.cancelRequestsFromSender(request.getTarget());

@@ -1,5 +1,7 @@
 package se.nixonmc.duels.modules.duel;
 
+import se.nixonmc.duels.modules.ArenaSystem.Arena;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,9 +27,9 @@ public class DuelManager {
         }
         return null;
     }
-    public Duel createDuel() {
+    public Duel createDuel(Arena arena) {
         UUID duelId = UUID.randomUUID();
-        Duel duel = new Duel(duelId, DuelState.STARTING);
+        Duel duel = new Duel(duelId, DuelState.STARTING, arena);
         addDuel(duel);
         return duel;
     }
