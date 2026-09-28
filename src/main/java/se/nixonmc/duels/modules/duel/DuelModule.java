@@ -9,24 +9,14 @@ import se.nixonmc.duels.modules.kit.KitTestCommand;
 
 public class DuelModule implements DuelsModule {
 
-    private final DuelSystem duelSystem;
+    private DuelSystem duelSystem;
     private final DuelsCore core;
     private final KitSystem kitSystem;
     private ArenaManager arenaManager;
 
     public DuelModule(DuelsCore core) {
         this.core = core;
-
-        DuelManager duelManager = new DuelManager();
-        DuelRequestManager requestManager = new DuelRequestManager();
-
-        kitSystem = new KitSystem();
-
-        this.duelSystem = new DuelSystem(
-                duelManager,
-                requestManager,
-                kitSystem
-        );
+        this.kitSystem = new KitSystem();
     }
 
     @Override
@@ -37,6 +27,16 @@ public class DuelModule implements DuelsModule {
     @Override
     public void enable() {
         arenaManager = new ArenaManager(core);
+
+        DuelManager duelManager = new DuelManager();
+        DuelRequestManager requestManager = new DuelRequestManager();
+
+        this.duelSystem = new DuelSystem(
+                duelManager,
+                requestManager,
+                kitSystem,
+                arenaManager
+        );
 
         DuelKitMenu kitMenu = new DuelKitMenu(kitSystem);
         DuelMapMenu mapMenu = new DuelMapMenu(arenaManager);
@@ -62,13 +62,12 @@ public class DuelModule implements DuelsModule {
         );
 
         core.getPlugin().getServer().getPluginManager().registerEvents(
-                new DuelKitMenuListener(
-                        core,
-                        kitMenu,
-                        mapMenu,
-                        confirmMenu,
-                        duelSystem
-                ),
+                new DuelKitMenuListener(core, kitMenu, mapMenu, confirmMenu, duelSystem),
+                core.getPlugin()
+        );
+
+        core.getPlugin().getServer().getPluginManager().registerEvents(
+                new DuelEndListener(core, duelSystem, arenaManager),
                 core.getPlugin()
         );
     }

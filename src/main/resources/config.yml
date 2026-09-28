@@ -1,8 +1,9 @@
 debug: false
 
-modules:
-  duel: true
-  arena: true
-  kit: true
-  queue: true
-  stats: true
+lobby:
+  world: "world"
+  x: 0.5
+  y: 80.0
+  z: 0.5
+  yaw: 0.0
+  pitch: 0.0
