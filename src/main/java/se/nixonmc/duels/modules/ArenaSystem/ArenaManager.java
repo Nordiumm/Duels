@@ -135,6 +135,6 @@ public class ArenaManager {
 
         arenas.values().remove(arena);
         occupiedArenas.remove(arena);
-
+        DeleteArena(arena);
     }
 }
