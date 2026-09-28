@@ -20,7 +20,7 @@ public class Loader {
 
         ConfigurationSection arenasSection = core.getConfigManager()
                 .get("arenas.yml")
-                .getConfigurationSection("Arenas");
+                .getConfigurationSection("arenas");
 
         if (arenasSection == null) {
             Bukkit.getLogger().warning("No Arenas section found in arenas.yml!"
