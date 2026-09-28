@@ -175,7 +175,7 @@ public class ArenaManager {
         }
 
         // Get the Bukkit world
-        World world = clonedWorld.getRespawnWorld();
+        World world = Bukkit.getWorld(clonedWorld.getAliasOrName());
 
         if (world == null) {
             Bukkit.getLogger().severe(
