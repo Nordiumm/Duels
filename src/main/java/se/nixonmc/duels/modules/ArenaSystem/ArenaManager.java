@@ -12,6 +12,7 @@ import org.mvplugins.multiverse.core.world.options.DeleteWorldOptions;
 import org.mvplugins.multiverse.core.world.options.UnloadWorldOptions;
 import se.nixonmc.duels.core.DuelsCore;
 
+import javax.print.attribute.ResolutionSyntax;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -120,9 +121,9 @@ public class ArenaManager {
 
         //Bukkit.getWorld(result.get().getName()).setAutoSave(false);
 
+        //Bukkit.getWorld(result.get().getName())
 
-
-        Arena a = new Arena(Bukkit.getWorld(result.get().getName()), template.getPlayer1Spawn(), template.getPlayer2Spawn(), newWorldName);
+        Arena a = new Arena(result.get().getRespawnWorld(), template.getPlayer1Spawn(), template.getPlayer2Spawn(), newWorldName);
         occupiedArenas.add(a);
         return a;
     }
