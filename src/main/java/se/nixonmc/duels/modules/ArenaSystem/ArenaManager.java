@@ -118,7 +118,7 @@ public class ArenaManager {
                 CloneWorldOptions.fromTo(mvWorld, newWorldName)
         );
 
-        Bukkit.getWorld(result.get().getName()).setAutoSave(false);
+        //Bukkit.getWorld(result.get().getName()).setAutoSave(false);
 
 
 
