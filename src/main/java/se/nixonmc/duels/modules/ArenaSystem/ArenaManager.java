@@ -112,7 +112,7 @@ public class ArenaManager {
                         "Template world is not managed by Multiverse"
                 ));
 
-        String newWorldName = templateWorld.getName() + (occupiedArenas.size() + 1);
+        String newWorldName = templateWorld.getName() + (occupiedArenas.size() + arenas.size() + 1);
 
         var result = multiverseCore.getWorldManager().cloneWorld(
                 CloneWorldOptions.fromTo(mvWorld, newWorldName)
