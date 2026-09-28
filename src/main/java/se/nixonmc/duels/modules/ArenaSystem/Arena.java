@@ -10,7 +10,7 @@ import se.nixonmc.duels.core.DuelsCore;
 public class Arena {
 
     private final World world;
-
+    private String ArenaName = "";
     private final Location player1Spawn;
     private final Location player2Spawn;
 
@@ -20,11 +20,13 @@ public class Arena {
     public Arena(
             World world,
             Location player1Spawn,
-            Location player2Spawn
+            Location player2Spawn,
+            String arenaName
     ) {
         this.world = world;
         this.player1Spawn = player1Spawn;
         this.player2Spawn = player2Spawn;
+        this.ArenaName = arenaName;
     }
 
     public boolean isAvailable() {
@@ -34,6 +36,8 @@ public class Arena {
     public World getWorld() {
         return world;
     }
+
+    public String getArenaID(){ return ArenaName; }
 
     public Location getPlayer1Spawn() {
         return player1Spawn;

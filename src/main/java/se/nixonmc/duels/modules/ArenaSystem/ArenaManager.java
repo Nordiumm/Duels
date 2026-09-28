@@ -95,7 +95,7 @@ public class ArenaManager {
 
     public Arena getAvailableArena(String arenaName) {
         for (Arena arena : arenas.values()) {
-            if(arena.getWorld().getName().equals(arenaName)){
+            if(arena.getArenaID().equals(arenaName)){
                 if (arena.isAvailable()) {
                     occupiedArenas.add(arena);
                     return arena;
@@ -122,7 +122,7 @@ public class ArenaManager {
 
 
 
-        Arena a = new Arena(Bukkit.getWorld(result.get().getName()), template.getPlayer1Spawn(), template.getPlayer2Spawn());
+        Arena a = new Arena(Bukkit.getWorld(result.get().getName()), template.getPlayer1Spawn(), template.getPlayer2Spawn(), newWorldName);
         occupiedArenas.add(a);
         return a;
     }

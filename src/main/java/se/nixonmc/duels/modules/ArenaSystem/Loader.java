@@ -75,7 +75,8 @@ public class Loader {
             Arena arena = new Arena(
                     world,
                     player1Location,
-                    player2Location
+                    player2Location,
+                    arenaId
             );
 
             manager.arenaDefinitions.put(arenaId, arena);

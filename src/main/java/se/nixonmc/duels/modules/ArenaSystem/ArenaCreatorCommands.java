@@ -211,7 +211,8 @@ public class ArenaCreatorCommands implements CommandExecutor {
                 Arena arena = new Arena(
                         creation.world,
                         creation.player1Spawn,
-                        creation.player2Spawn
+                        creation.player2Spawn,
+                        creation.name
                 );
 
                 /*
