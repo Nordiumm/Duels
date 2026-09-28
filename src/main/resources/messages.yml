@@ -10,12 +10,16 @@ duel:
   not-in-duel: "<red>You are not in a duel."
   started: "<green>Your duel has started!"
   finished: "<yellow>Your duel has ended."
+
   request-sent: "<green>Duel request sent to <player>."
-  request-received: "<yellow><player> has challenged you to a <kit> duel! <accept> <deny>"
+  request-received: "<yellow><player> has challenged you to a <kit> duel on <map>! <green><click:run_command:'/duel accept'><hover:show_text:'<green>Accept duel'>[Accept]</hover></click> <red><click:run_command:'/duel deny'><hover:show_text:'<red>Deny duel'>[Deny]</hover></click>"
+
   request-accepted: "<green>You accepted the duel request."
   request-denied: "<yellow>You denied the duel request."
+
   no-request: "<red>You don't have a pending duel request."
   request-already-sent: "<red>You already have a pending request to that player."
   target-in-duel: "<red>That player is already in a duel."
+
   usage: "<red>Usage: /duel <player|accept|deny>"
   cannot-duel-self: "<red>You cannot duel yourself."

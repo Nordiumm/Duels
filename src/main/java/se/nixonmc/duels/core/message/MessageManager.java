@@ -48,4 +48,25 @@ public final class MessageManager {
 
         sender.sendMessage(miniMessage.deserialize(message));
     }
+
+    public void send(
+            CommandSender sender,
+            String path,
+            String placeholder1,
+            String replacement1,
+            String placeholder2,
+            String replacement2,
+            String placeholder3,
+            String replacement3
+    ) {
+        String message = core.getConfigManager()
+                .get("messages.yml")
+                .getString(path, "<red>Missing message: " + path);
+
+        message = message.replace(placeholder1, replacement1);
+        message = message.replace(placeholder2, replacement2);
+        message = message.replace(placeholder3, replacement3);
+
+        sender.sendMessage(miniMessage.deserialize(message));
+    }
 }

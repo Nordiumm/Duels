@@ -40,6 +40,10 @@ public class DuelModule implements DuelsModule {
 
         DuelKitMenu kitMenu = new DuelKitMenu(kitSystem);
         DuelMapMenu mapMenu = new DuelMapMenu(arenaManager);
+        DuelConfirmMenu confirmMenu = new DuelConfirmMenu(
+                kitMenu,
+                duelSystem
+        );
 
         core.getPlugin().getLogger().info(
                 "Duel module enabled!"
@@ -58,7 +62,13 @@ public class DuelModule implements DuelsModule {
         );
 
         core.getPlugin().getServer().getPluginManager().registerEvents(
-                new DuelKitMenuListener(kitMenu, mapMenu),
+                new DuelKitMenuListener(
+                        core,
+                        kitMenu,
+                        mapMenu,
+                        confirmMenu,
+                        duelSystem
+                ),
                 core.getPlugin()
         );
     }

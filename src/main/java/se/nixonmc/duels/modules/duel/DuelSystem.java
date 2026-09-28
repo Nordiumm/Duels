@@ -6,6 +6,7 @@ import se.nixonmc.duels.modules.kit.KitSystem;
 import java.util.UUID;
 
 public class DuelSystem {
+
     private final DuelManager duelManager;
     private final DuelRequestManager requestManager;
     private final KitSystem kitSystem;
@@ -23,6 +24,7 @@ public class DuelSystem {
     public Duel createDuel() {
         return duelManager.createDuel();
     }
+
     public Duel acceptRequest(UUID target) {
         DuelRequest request = requestManager.getRequest(target);
 
@@ -40,13 +42,21 @@ public class DuelSystem {
 
         return duel;
     }
+
     public Kit getKit(String id) {
         return kitSystem.getKitManager().getKit(id);
     }
+
     public boolean denyRequest(UUID target) {
         return requestManager.denyRequest(target);
     }
-    public DuelRequest createRequest(UUID sender, UUID target) {
+
+    public DuelRequest createRequest(
+            UUID sender,
+            UUID target,
+            String kit,
+            String map
+    ) {
         if (duelManager.isInDuel(sender)) {
             return null;
         }
@@ -55,20 +65,30 @@ public class DuelSystem {
             return null;
         }
 
-        return requestManager.createRequest(sender, target);
+        return requestManager.createRequest(
+                sender,
+                target,
+                kit,
+                map
+        );
     }
+
     public boolean addPlayerToDuel(Duel duel, UUID playerId) {
         return duelManager.addPlayerToDuel(duel, playerId);
     }
+
     public boolean removePlayerFromDuel(Duel duel, UUID playerId) {
         return duelManager.removePlayerFromDuel(duel, playerId);
     }
+
     public void startDuel(Duel duel) {
         duel.setState(DuelState.IN_PROGRESS);
     }
+
     public void finishDuel(Duel duel) {
         duel.setState(DuelState.FINISHED);
     }
+
     public void removeDuel(Duel duel) {
         duelManager.removeDuel(duel);
     }

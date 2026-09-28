@@ -8,6 +8,7 @@ public class DuelSetup {
     private final Player player;
     private final Player target;
     private Kit kit;
+    private String map;
 
     public DuelSetup(Player player, Player target) {
         this.player = player;
@@ -28,5 +29,13 @@ public class DuelSetup {
 
     public void setKit(Kit kit) {
         this.kit = kit;
+    }
+
+    public String getMap() {
+        return map;
+    }
+
+    public void setMap(String map) {
+        this.map = map;
     }
 }
