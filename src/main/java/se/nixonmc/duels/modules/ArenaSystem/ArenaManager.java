@@ -139,7 +139,7 @@ public class ArenaManager {
 
         // Generate a new world name
         String newWorldName = templateWorld.getName()
-                + (occupiedArenas.size() + arenas.size() + 1);
+                + (multiverseCore.getWorldManager().getWorlds().size());
 
         // Clone the template world
         var result = multiverseCore.getWorldManager().cloneWorld(
