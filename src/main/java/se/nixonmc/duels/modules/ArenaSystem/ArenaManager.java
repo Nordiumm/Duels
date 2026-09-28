@@ -95,36 +95,113 @@ public class ArenaManager {
     }
 
     public Arena getAvailableArena(String arenaName) {
+        // First, look for an existing available arena
         for (Arena arena : arenas.values()) {
-            if(arena.getArenaID().equals(arenaName)){
-                if (arena.isAvailable()) {
-                    occupiedArenas.add(arena);
-                    return arena;
-                }
+            if (arena.getArenaID().equals(arenaName) && arena.isAvailable()) {
+                occupiedArenas.add(arena);
+                return arena;
             }
         }
 
+        // Make sure we have at least one arena template
+        if (arenaDefinitions.isEmpty()) {
+            Bukkit.getLogger().severe("[Duels] No arena definitions are configured.");
+            return null;
+        }
+
+        // Get the template arena
         Arena template = arenaDefinitions.values().iterator().next();
         World templateWorld = template.getWorld();
 
-        MultiverseWorld mvWorld = multiverseCore.getWorldManager()
-                .getWorld(templateWorld)
-                .getOrElseThrow(() -> new IllegalStateException(
-                        "Template world is not managed by Multiverse"
-                ));
+        if (templateWorld == null) {
+            Bukkit.getLogger().severe("[Duels] Template arena has no world.");
+            return null;
+        }
 
-        String newWorldName = templateWorld.getName() + (occupiedArenas.size() + arenas.size() + 1);
+        // Get the template world from Multiverse
+        MultiverseWorld mvWorld;
 
+        try {
+            mvWorld = multiverseCore.getWorldManager()
+                    .getWorld(templateWorld)
+                    .getOrElseThrow(() -> new IllegalStateException(
+                            "Template world '" + templateWorld.getName()
+                                    + "' is not managed by Multiverse"
+                    ));
+        } catch (Exception e) {
+            Bukkit.getLogger().severe(
+                    "[Duels] Could not find template world in Multiverse: "
+                            + templateWorld.getName()
+            );
+            e.printStackTrace();
+            return null;
+        }
+
+        // Generate a new world name
+        String newWorldName = templateWorld.getName()
+                + (occupiedArenas.size() + arenas.size() + 1);
+
+        // Clone the template world
         var result = multiverseCore.getWorldManager().cloneWorld(
                 CloneWorldOptions.fromTo(mvWorld, newWorldName)
         );
 
-        //Bukkit.getWorld(result.get().getName()).setAutoSave(false);
+        // IMPORTANT: cloneWorld() can return a failed Attempt.
+        if (result.isFailure()) {
+            Bukkit.getLogger().severe(
+                    "[Duels] Failed to clone arena world!"
+            );
+            Bukkit.getLogger().severe(
+                    "[Duels] Template: " + templateWorld.getName()
+            );
+            Bukkit.getLogger().severe(
+                    "[Duels] Target: " + newWorldName
+            );
+            Bukkit.getLogger().severe(
+                    "[Duels] Result: " + result
+            );
 
-        //Bukkit.getWorld(result.get().getName())
+            return null;
+        }
 
-        Arena a = new Arena(result.get().getRespawnWorld(), template.getPlayer1Spawn(), template.getPlayer2Spawn(), newWorldName);
+        // Only call get() after checking for failure
+        MultiverseWorld clonedWorld = result.get();
+
+        if (clonedWorld == null) {
+            Bukkit.getLogger().severe(
+                    "[Duels] Multiverse returned a null cloned world."
+            );
+            return null;
+        }
+
+        // Get the Bukkit world
+        World world = clonedWorld.getRespawnWorld();
+
+        if (world == null) {
+            Bukkit.getLogger().severe(
+                    "[Duels] Cloned world has no respawn world: "
+                            + newWorldName
+            );
+            return null;
+        }
+
+        // Disable autosaving for temporary duel worlds
+        world.setAutoSave(false);
+
+        // Create the arena
+        Arena a = new Arena(
+                world,
+                template.getPlayer1Spawn(),
+                template.getPlayer2Spawn(),
+                newWorldName
+        );
+
         occupiedArenas.add(a);
+
+        Bukkit.getLogger().info(
+                "[Duels] Created arena world: " + newWorldName
+        );
+
         return a;
     }
 
