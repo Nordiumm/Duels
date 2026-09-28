@@ -5,23 +5,33 @@ import java.util.Set;
 import java.util.UUID;
 
 public class DuelRequestManager {
+
     private final Set<DuelRequest> requests = new HashSet<>();
 
     public void addRequest(DuelRequest request) {
         requests.add(request);
     }
+
     public void removeRequest(DuelRequest request) {
         requests.remove(request);
     }
+
     public DuelRequest getRequest(UUID playerId) {
         for (DuelRequest request : requests) {
             if (request.getTarget().equals(playerId)) {
                 return request;
             }
         }
+
         return null;
     }
-    public DuelRequest createRequest(UUID sender, UUID target) {
+
+    public DuelRequest createRequest(
+            UUID sender,
+            UUID target,
+            String kit,
+            String map
+    ) {
         if (hasRequest(sender, target)) {
             return null;
         }
@@ -29,6 +39,8 @@ public class DuelRequestManager {
         DuelRequest request = new DuelRequest(
                 sender,
                 target,
+                kit,
+                map,
                 System.currentTimeMillis()
         );
 
@@ -36,6 +48,7 @@ public class DuelRequestManager {
 
         return request;
     }
+
     public boolean denyRequest(UUID target) {
         for (DuelRequest request : requests) {
             if (request.getTarget().equals(target)) {
@@ -43,13 +56,16 @@ public class DuelRequestManager {
                 return true;
             }
         }
+
         return false;
     }
+
     public void cancelRequestsFromSender(UUID sender) {
         requests.removeIf(request ->
                 request.getSender().equals(sender)
         );
     }
+
     public boolean hasRequest(UUID sender, UUID target) {
         for (DuelRequest request : requests) {
             if (request.getSender().equals(sender)

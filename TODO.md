@@ -23,8 +23,8 @@
 
 ## Kit
 - [x] Kit
-- [ ] KitManager - **IN PROGRESS**
-- [ ] KitSystem - **IN PROGRESS**
+- [x] KitManager
+- [x] KitSystem
 - [ ] Preset Kits - **IN PROGRESS**
 - [ ] Kit Editor
 
