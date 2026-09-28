@@ -13,7 +13,8 @@ public class SwordKit extends Kit {
                 "Sword",
                 createContents(),
                 createArmor(),
-                null
+                null,
+                new ItemStack(Material.DIAMOND_SWORD)
         );
     }
     private static ItemStack[] createContents() {

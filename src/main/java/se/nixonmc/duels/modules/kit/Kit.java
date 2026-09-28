@@ -8,19 +8,22 @@ public class Kit {
     private final ItemStack[] contents;
     private final ItemStack[] armor;
     private final ItemStack offHand;
+    private final ItemStack icon;
 
     public Kit(
             String id,
             String name,
             ItemStack[] contents,
             ItemStack[] armor,
-            ItemStack offHand
+            ItemStack offHand,
+            ItemStack icon
     ) {
         this.id = id;
         this.name = name;
         this.contents = contents;
         this.armor = armor;
         this.offHand = offHand;
+        this.icon = icon;
     }
 
     public String getId() {
@@ -41,5 +44,9 @@ public class Kit {
 
     public ItemStack getOffhand() {
         return offHand;
+    }
+
+    public ItemStack getIcon() {
+        return icon;
     }
 }

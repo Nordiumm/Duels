@@ -16,7 +16,8 @@ public class MaceKit extends Kit {
                 "Mace",
                 createContents(),
                 createArmor(),
-                createOffhand()
+                createOffhand(),
+                new ItemStack(Material.MACE)
         );
     }
 

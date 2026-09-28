@@ -38,12 +38,15 @@ public class DuelModule implements DuelsModule {
     public void enable() {
         arenaManager = new ArenaManager(core);
 
+        DuelKitMenu kitMenu = new DuelKitMenu(kitSystem);
+        DuelMapMenu mapMenu = new DuelMapMenu(arenaManager);
+
         core.getPlugin().getLogger().info(
                 "Duel module enabled!"
         );
 
         core.getPlugin().getCommand("duel").setExecutor(
-                new DuelCommand(core, duelSystem)
+                new DuelCommand(core, duelSystem, kitMenu)
         );
 
         core.getPlugin().getCommand("testkit").setExecutor(
@@ -52,6 +55,11 @@ public class DuelModule implements DuelsModule {
 
         core.getPlugin().getCommand("arena").setExecutor(
                 new ArenaCreatorCommands(arenaManager, core)
+        );
+
+        core.getPlugin().getServer().getPluginManager().registerEvents(
+                new DuelKitMenuListener(kitMenu, mapMenu),
+                core.getPlugin()
         );
     }
 
