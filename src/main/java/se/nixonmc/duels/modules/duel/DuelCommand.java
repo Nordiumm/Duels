@@ -102,7 +102,7 @@ public class DuelCommand implements CommandExecutor {
                 return true;
             }
 
-            kitMenu.open(player);
+            kitMenu.open(player, target);
         }
 
         return true;

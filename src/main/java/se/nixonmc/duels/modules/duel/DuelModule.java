@@ -20,9 +20,7 @@ public class DuelModule implements DuelsModule {
         DuelManager duelManager = new DuelManager();
         DuelRequestManager requestManager = new DuelRequestManager();
 
-
         kitSystem = new KitSystem();
-
 
         this.duelSystem = new DuelSystem(
                 duelManager,
@@ -38,8 +36,10 @@ public class DuelModule implements DuelsModule {
 
     @Override
     public void enable() {
-        DuelKitMenu kitMenu = new DuelKitMenu(kitSystem);
         arenaManager = new ArenaManager(core);
+
+        DuelKitMenu kitMenu = new DuelKitMenu(kitSystem);
+        DuelMapMenu mapMenu = new DuelMapMenu(arenaManager);
 
         core.getPlugin().getLogger().info(
                 "Duel module enabled!"
@@ -58,7 +58,7 @@ public class DuelModule implements DuelsModule {
         );
 
         core.getPlugin().getServer().getPluginManager().registerEvents(
-                new DuelKitMenuListener(kitMenu),
+                new DuelKitMenuListener(kitMenu, mapMenu),
                 core.getPlugin()
         );
     }
