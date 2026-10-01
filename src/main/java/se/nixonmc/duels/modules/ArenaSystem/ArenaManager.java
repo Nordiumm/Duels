@@ -14,14 +14,7 @@ import org.mvplugins.multiverse.core.world.options.UnloadWorldOptions;
 import se.nixonmc.duels.core.DuelsCore;
 
 import javax.print.attribute.ResolutionSyntax;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-
-
-
-import java.util.HashMap;
+import java.util.*;
 
 
 public class ArenaManager {
@@ -202,7 +195,7 @@ public class ArenaManager {
 
         // Generate a new world name
         String newWorldName = templateWorld.getName()
-                + (multiverseCore.getWorldManager().getWorlds().size());
+                + (UUID.randomUUID());
 
         // Clone the template world
         var result = multiverseCore.getWorldManager().cloneWorld(
