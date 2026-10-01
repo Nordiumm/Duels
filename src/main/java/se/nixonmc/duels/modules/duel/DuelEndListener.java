@@ -106,7 +106,7 @@ public class DuelEndListener implements Listener {
             pendingRespawns.remove(playerId);
 
             duel.getArena().SetPlayers(null, null);
-            arenaManager.ReturnWorldToCycle(duel.getArena());
+            arenaManager.removeArena(duel.getArena());
         });
     }
 

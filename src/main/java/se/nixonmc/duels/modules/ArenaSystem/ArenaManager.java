@@ -70,54 +70,91 @@ public class ArenaManager {
 
     public void DeleteArena(Arena arena) {
 
-        if (arena == null || arena.getWorld() == null) {
-            Bukkit.getLogger().warning("[Duels] Arena/world is null!");
+        if (arena == null) {
+            Bukkit.getLogger().warning("[Duels] Arena is null.");
             return;
         }
 
         World world = arena.getWorld();
+
+        if (world == null) {
+            Bukkit.getLogger().warning("[Duels] Arena world is null.");
+            occupiedArenas.remove(arena);
+            return;
+        }
+
+        World fallback = Bukkit.getWorlds().get(0);
+
+        if (fallback == null || fallback.equals(world)) {
+            Bukkit.getLogger().severe(
+                    "[Duels] Cannot delete " + world.getName() +
+                            ": invalid fallback world."
+            );
+            return;
+        }
+
         String worldName = world.getName();
 
-        Bukkit.getLogger().info("[Duels] Deleting arena: " + worldName);
+        MultiverseCoreApi multiverse = MultiverseCoreApi.get();
 
-        // Teleport players out
-        for (Player player : new ArrayList<>(world.getPlayers())) {
-            World fallback = Bukkit.getWorlds().get(0);
+        multiverse.getWorldManager()
+                .getWorld(worldName)
+                .peek(mvWorld -> {
 
-            if (fallback != null) {
-                player.teleport(fallback.getSpawnLocation());
-            }
-        }
+                    // Teleport everyone synchronously before deletion.
+                    for (Player player : new ArrayList<>(world.getPlayers())) {
+                        player.teleport(fallback.getSpawnLocation());
+                    }
 
-        MultiverseWorld mvWorld = multiverseCore.getWorldManager()
-                .getWorld(world)
-                .getOrElseThrow(() -> new IllegalStateException(
-                        "Arena world is not managed by Multiverse: " + worldName
-                ));
+                    // Verify nobody is still inside.
+                    if (!world.getPlayers().isEmpty()) {
+                        Bukkit.getLogger().severe(
+                                "[Duels] Players are still inside " +
+                                        worldName +
+                                        ". Aborting deletion."
+                        );
+                        return;
+                    }
 
-        // Let Multiverse perform the deletion
-        var deleteResult = multiverseCore.getWorldManager().deleteWorld(
-                DeleteWorldOptions.world(mvWorld)
-        );
+                    Bukkit.getLogger().info(
+                            "[Duels] Deleting arena world: " +
+                                    worldName
+                    );
 
-        if (deleteResult.isSuccess()) {
+                    multiverse.getWorldManager()
+                            .deleteWorld(
+                                    DeleteWorldOptions.world(mvWorld)
+                            )
+                            .onSuccess(deleted -> {
 
-            Bukkit.getLogger().info(
-                    "[Duels] Arena WORLD DELETED: " + worldName
-            );
+                                Bukkit.getLogger().info(
+                                        "[Duels] Arena world deleted: " +
+                                                worldName
+                                );
 
-            occupiedArenas.remove(arena);
+                                occupiedArenas.remove(arena);
 
-        } else {
+                            })
+                            .onFailure(reason -> {
 
-            Bukkit.getLogger().severe(
-                    "[Duels] FAILED TO DELETE WORLD: " + worldName
-            );
+                                Bukkit.getLogger().severe(
+                                        "[Duels] Failed to delete " +
+                                                worldName
+                                );
 
-            Bukkit.getLogger().severe(
-                    "[Duels] Delete result: " + deleteResult
-            );
-        }
+                                Bukkit.getLogger().severe(
+                                        "[Duels] Reason: " + reason
+                                );
+                            });
+
+                })
+                .onEmpty(() -> {
+
+                    Bukkit.getLogger().severe(
+                            "[Duels] World is not managed by Multiverse: " +
+                                    worldName
+                    );
+                });
     }
 
     public Arena getAvailableArena(String arenaName) {
