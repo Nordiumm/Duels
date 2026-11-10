@@ -50,13 +50,12 @@ public class DuelEndListener implements Listener {
         event.setDroppedExp(0);
 
         UUID deadPlayerId = deadPlayer.getUniqueId();
-        Location lobby = getLobbyLocation();
+        Location returnLocation = getReturnLocation(duel.getArena().getWorld());
 
-        if (lobby == null) {
+        if (returnLocation == null) {
             core.getPlugin().getLogger().severe(
-                    "[Duels] Cannot finish duel cleanly because the lobby location is unavailable."
+                    "[Duels] No lobby or fallback world is available. The duel will still be finished."
             );
-            return;
         }
 
         // Skip the death screen for this duel world.
@@ -74,7 +73,11 @@ public class DuelEndListener implements Listener {
 
             if (winner != null && winner.isOnline()) {
                 winner.sendMessage("You won the duel!");
-                winner.teleport(lobby);
+                if (returnLocation != null && !winner.teleport(returnLocation)) {
+                    core.getPlugin().getLogger().warning(
+                            "[Duels] Could not teleport the winner to the return location."
+                    );
+                }
             }
         }
 
@@ -94,26 +97,35 @@ public class DuelEndListener implements Listener {
             return;
         }
 
-        Location lobby = getLobbyLocation();
+        Location returnLocation = getReturnLocation(duel.getArena().getWorld());
 
-        if (lobby == null) {
-            return;
+        if (returnLocation != null) {
+            event.setRespawnLocation(returnLocation);
+        } else {
+            core.getPlugin().getLogger().severe(
+                    "[Duels] No safe return location is available for this respawn."
+            );
         }
 
-        event.setRespawnLocation(lobby);
-
-        // Run after the respawn transition so the arena world is no longer occupied.
         Bukkit.getScheduler().runTask(core.getPlugin(), () -> {
             Player player = Bukkit.getPlayer(playerId);
 
-            if (player == null || player.getWorld().equals(duel.getArena().getWorld())) {
+            if (player == null || !player.isOnline()) {
+                cleanupArena(duel);
                 return;
             }
 
-            pendingRespawns.remove(playerId);
+            if (player.getWorld().equals(duel.getArena().getWorld())) {
+                Location fallback = getReturnLocation(duel.getArena().getWorld());
+                if (fallback == null || !player.teleport(fallback)) {
+                    core.getPlugin().getLogger().severe(
+                            "[Duels] Could not move the respawned player out of the arena; arena cleanup was postponed."
+                    );
+                    return;
+                }
+            }
 
-            duel.getArena().SetPlayers(null, null);
-            arenaManager.removeArena(duel.getArena());
+            cleanupArena(duel);
         });
     }
 
@@ -157,6 +169,21 @@ public class DuelEndListener implements Listener {
         pendingRespawns.values().removeIf(pending -> pending == duel);
         duel.getArena().SetPlayers(null, null);
         arenaManager.removeArena(duel.getArena());
+    }
+
+    private Location getReturnLocation(World arenaWorld) {
+        Location lobby = getLobbyLocation();
+        if (lobby != null && !lobby.getWorld().equals(arenaWorld)) {
+            return lobby;
+        }
+
+        for (World world : Bukkit.getWorlds()) {
+            if (!world.equals(arenaWorld)) {
+                return world.getSpawnLocation();
+            }
+        }
+
+        return null;
     }
 
     private Location getLobbyLocation() {
