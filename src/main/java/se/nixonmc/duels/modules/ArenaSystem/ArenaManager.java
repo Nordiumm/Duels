@@ -159,14 +159,16 @@ public class ArenaManager {
             }
         }
 
-        // Make sure we have at least one arena template
-        if (arenaDefinitions.isEmpty()) {
-            Bukkit.getLogger().severe("[Duels] No arena definitions are configured.");
+        // Clone the requested arena template, not an arbitrary configured map.
+        Arena template = arenaDefinitions.get(arenaName);
+
+        if (template == null) {
+            Bukkit.getLogger().severe(
+                    "[Duels] No arena definition exists for map '" + arenaName + "'."
+            );
             return null;
         }
 
-        // Get the template arena
-        Arena template = arenaDefinitions.values().iterator().next();
         World templateWorld = template.getWorld();
 
         if (templateWorld == null) {
@@ -260,7 +262,6 @@ public class ArenaManager {
 
         return a;
     }
-
 
 
 
