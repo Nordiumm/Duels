@@ -108,7 +108,7 @@ public class DuelKitMenuListener implements Listener {
                 return;
             }
 
-            String map = mapMenu.getMap(event.getRawSlot());
+            String map = mapMenu.getMap(player.getUniqueId(), event.getRawSlot());
 
             if (map == null) {
                 return;
@@ -121,6 +121,7 @@ public class DuelKitMenuListener implements Listener {
             }
 
             setup.setMap(map);
+            mapMenu.removeMaps(player.getUniqueId());
 
             transitioning.add(player.getUniqueId());
             confirmMenu.open(player);
@@ -178,6 +179,8 @@ public class DuelKitMenuListener implements Listener {
         }
 
         if (event.getView().getTitle().equals("Select a Map")) {
+            mapMenu.removeMaps(player.getUniqueId());
+
             if (transitioning.remove(player.getUniqueId())) {
                 return;
             }
