@@ -1,6 +1,7 @@
 package se.nixonmc.duels.modules.duel;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -48,6 +49,20 @@ public class DuelEndListener implements Listener {
         event.setDroppedExp(0);
 
         UUID deadPlayerId = deadPlayer.getUniqueId();
+        Location lobby = getLobbyLocation();
+
+        if (lobby == null) {
+            core.getPlugin().getLogger().severe(
+                    "[Duels] Cannot finish duel cleanly because the lobby location is unavailable."
+            );
+            return;
+        }
+
+        // Skip the death screen for this duel world.
+        deadPlayer.getWorld().setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true);
+
+        // The dead player will be sent to the lobby by PlayerRespawnEvent.
+        pendingRespawns.put(deadPlayerId, duel);
 
         for (UUID playerId : duel.getPlayers()) {
             if (playerId.equals(deadPlayerId)) {
@@ -58,23 +73,13 @@ public class DuelEndListener implements Listener {
 
             if (winner != null && winner.isOnline()) {
                 winner.sendMessage("You won the duel!");
-
-                Location lobby = getLobbyLocation();
-
-                if (lobby != null) {
-                    winner.teleport(lobby);
-                }
+                winner.teleport(lobby);
             }
         }
 
         deadPlayer.sendMessage("You lost the duel!");
 
-        Location lobby = getLobbyLocation();
-
-        if (lobby != null) {
-            pendingRespawns.put(deadPlayerId, duel);
-        }
-
+        // Finish and unregister the duel once, when the death is confirmed.
         duelSystem.finishDuel(duel);
         duelSystem.removeDuel(duel);
     }
@@ -96,6 +101,7 @@ public class DuelEndListener implements Listener {
 
         event.setRespawnLocation(lobby);
 
+        // Run after the respawn transition so the arena world is no longer occupied.
         Bukkit.getScheduler().runTask(core.getPlugin(), () -> {
             Player player = Bukkit.getPlayer(playerId);
 
