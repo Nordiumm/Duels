@@ -10,11 +10,12 @@ import se.nixonmc.duels.modules.ArenaSystem.ArenaManager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class DuelMapMenu {
 
     private final ArenaManager arenaManager;
-    private final Map<Integer, String> mapsBySlot = new HashMap<>();
+    private final Map<UUID, Map<Integer, String>> mapsByPlayer = new HashMap<>();
 
     public DuelMapMenu(ArenaManager arenaManager) {
         this.arenaManager = arenaManager;
@@ -27,11 +28,11 @@ public class DuelMapMenu {
                 "Select a Map"
         );
 
-        mapsBySlot.clear();
-
+        Map<Integer, String> playerMaps = new HashMap<>();
         int mapCount = arenaManager.arenaDefinitions.size();
 
         if (mapCount == 0) {
+            mapsByPlayer.remove(player.getUniqueId());
             player.sendMessage("There are no maps available.");
             return;
         }
@@ -48,19 +49,23 @@ public class DuelMapMenu {
             ItemMeta meta = item.getItemMeta();
 
             meta.setDisplayName(arenaId);
-
             item.setItemMeta(meta);
 
             inventory.setItem(slot, item);
-            mapsBySlot.put(slot, arenaId);
-
+            playerMaps.put(slot, arenaId);
             slot++;
         }
 
+        mapsByPlayer.put(player.getUniqueId(), playerMaps);
         player.openInventory(inventory);
     }
 
-    public String getMap(int slot) {
-        return mapsBySlot.get(slot);
+    public String getMap(UUID playerId, int slot) {
+        Map<Integer, String> playerMaps = mapsByPlayer.get(playerId);
+        return playerMaps == null ? null : playerMaps.get(slot);
+    }
+
+    public void removeMaps(UUID playerId) {
+        mapsByPlayer.remove(playerId);
     }
 }
