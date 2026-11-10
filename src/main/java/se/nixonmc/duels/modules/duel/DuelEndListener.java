@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import se.nixonmc.duels.core.DuelsCore;
 import se.nixonmc.duels.modules.ArenaSystem.ArenaManager;
 
@@ -114,6 +115,48 @@ public class DuelEndListener implements Listener {
             duel.getArena().SetPlayers(null, null);
             arenaManager.removeArena(duel.getArena());
         });
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        UUID playerId = event.getPlayer().getUniqueId();
+        duelSystem.cancelRequestsForPlayer(playerId);
+
+        Duel duel = duelSystem.getDuel(playerId);
+        if (duel == null) {
+            Duel pendingDuel = pendingRespawns.remove(playerId);
+            if (pendingDuel != null) {
+                cleanupArena(pendingDuel);
+            }
+            return;
+        }
+
+        if (duel.getState() != DuelState.IN_PROGRESS) {
+            return;
+        }
+
+        Location lobby = getLobbyLocation();
+        for (UUID opponentId : duel.getPlayers()) {
+            if (opponentId.equals(playerId)) continue;
+
+            Player opponent = Bukkit.getPlayer(opponentId);
+            if (opponent != null && opponent.isOnline()) {
+                opponent.sendMessage("Your opponent left the duel. You won!");
+                if (lobby != null) {
+                    opponent.teleport(lobby);
+                }
+            }
+        }
+
+        duelSystem.finishDuel(duel);
+        duelSystem.removeDuel(duel);
+        cleanupArena(duel);
+    }
+
+    private void cleanupArena(Duel duel) {
+        pendingRespawns.values().removeIf(pending -> pending == duel);
+        duel.getArena().SetPlayers(null, null);
+        arenaManager.removeArena(duel.getArena());
     }
 
     private Location getLobbyLocation() {
