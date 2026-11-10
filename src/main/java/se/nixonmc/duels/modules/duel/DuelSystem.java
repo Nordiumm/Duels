@@ -72,8 +72,11 @@ public class DuelSystem {
 
         Duel duel = createDuel(arena);
 
-        addPlayerToDuel(duel, sender.getUniqueId());
-        addPlayerToDuel(duel, receiver.getUniqueId());
+        if (!addPlayerToDuel(duel, sender.getUniqueId())
+                || !addPlayerToDuel(duel, receiver.getUniqueId())) {
+            rollbackDuelStart(duel);
+            return null;
+        }
 
         Location senderSpawn = arena.getPlayer1Spawn().clone();
         senderSpawn.setWorld(arena.getWorld());
@@ -81,8 +84,13 @@ public class DuelSystem {
         Location receiverSpawn = arena.getPlayer2Spawn().clone();
         receiverSpawn.setWorld(arena.getWorld());
 
-        sender.teleport(senderSpawn);
-        receiver.teleport(receiverSpawn);
+        boolean senderTeleported = sender.teleport(senderSpawn);
+        boolean receiverTeleported = senderTeleported && receiver.teleport(receiverSpawn);
+
+        if (!senderTeleported || !receiverTeleported) {
+            rollbackDuelStart(duel);
+            return null;
+        }
 
         kitSystem.applyKit(sender, kit);
         kitSystem.applyKit(receiver, kit);
@@ -93,6 +101,13 @@ public class DuelSystem {
         requestManager.cancelRequestsFromSender(request.getTarget());
 
         return duel;
+    }
+
+    private void rollbackDuelStart(Duel duel) {
+        finishDuel(duel);
+        removeDuel(duel);
+        duel.getArena().SetPlayers(null, null);
+        arenaManager.removeArena(duel.getArena());
     }
 
     public Kit getKit(String id) {
