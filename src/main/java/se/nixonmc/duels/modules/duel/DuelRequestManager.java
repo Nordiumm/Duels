@@ -6,9 +6,11 @@ import java.util.UUID;
 
 public class DuelRequestManager {
 
+    private static final long REQUEST_EXPIRATION_MILLIS = 60_000L;
     private final Set<DuelRequest> requests = new HashSet<>();
 
     public void addRequest(DuelRequest request) {
+        purgeExpiredRequests();
         requests.add(request);
     }
 
@@ -17,6 +19,8 @@ public class DuelRequestManager {
     }
 
     public DuelRequest getRequest(UUID playerId) {
+        purgeExpiredRequests();
+
         for (DuelRequest request : requests) {
             if (request.getTarget().equals(playerId)) {
                 return request;
@@ -32,7 +36,9 @@ public class DuelRequestManager {
             String kit,
             String map
     ) {
-        if (hasRequest(sender, target)) {
+        purgeExpiredRequests();
+
+        if (hasRequestWithoutExpiryCheck(sender, target)) {
             return null;
         }
 
@@ -45,28 +51,30 @@ public class DuelRequestManager {
         );
 
         addRequest(request);
-
         return request;
     }
 
     public boolean denyRequest(UUID target) {
-        for (DuelRequest request : requests) {
-            if (request.getTarget().equals(target)) {
-                removeRequest(request);
-                return true;
-            }
+        DuelRequest request = getRequest(target);
+        if (request == null) {
+            return false;
         }
 
-        return false;
+        removeRequest(request);
+        return true;
     }
 
     public void cancelRequestsFromSender(UUID sender) {
-        requests.removeIf(request ->
-                request.getSender().equals(sender)
-        );
+        purgeExpiredRequests();
+        requests.removeIf(request -> request.getSender().equals(sender));
     }
 
     public boolean hasRequest(UUID sender, UUID target) {
+        purgeExpiredRequests();
+        return hasRequestWithoutExpiryCheck(sender, target);
+    }
+
+    private boolean hasRequestWithoutExpiryCheck(UUID sender, UUID target) {
         for (DuelRequest request : requests) {
             if (request.getSender().equals(sender)
                     && request.getTarget().equals(target)) {
@@ -75,5 +83,12 @@ public class DuelRequestManager {
         }
 
         return false;
+    }
+
+    private void purgeExpiredRequests() {
+        long now = System.currentTimeMillis();
+        requests.removeIf(request ->
+                now - request.getCreatedAt() >= REQUEST_EXPIRATION_MILLIS
+        );
     }
 }
