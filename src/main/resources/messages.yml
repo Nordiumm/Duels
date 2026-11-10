@@ -19,6 +19,7 @@ duel:
 
   no-request: "<red>You don't have a pending duel request."
   request-already-sent: "<red>You already have a pending request to that player."
+  request-unavailable: "<red>You or that player already has a pending request or is unavailable."
   target-in-duel: "<red>That player is already in a duel."
 
   usage: "<red>Usage: /duel <player|accept|deny>"

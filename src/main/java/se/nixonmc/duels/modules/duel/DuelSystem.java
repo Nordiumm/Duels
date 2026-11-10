@@ -97,8 +97,8 @@ public class DuelSystem {
 
         startDuel(duel);
 
-        requestManager.cancelRequestsFromSender(request.getSender());
-        requestManager.cancelRequestsFromSender(request.getTarget());
+        requestManager.cancelRequestsForPlayer(request.getSender());
+        requestManager.cancelRequestsForPlayer(request.getTarget());
 
         return duel;
     }
@@ -124,11 +124,11 @@ public class DuelSystem {
             String kit,
             String map
     ) {
-        if (duelManager.isInDuel(sender)) {
-            return null;
-        }
-
-        if (duelManager.isInDuel(target)) {
+        if (sender.equals(target)
+                || Bukkit.getPlayer(sender) == null
+                || Bukkit.getPlayer(target) == null
+                || duelManager.isInDuel(sender)
+                || duelManager.isInDuel(target)) {
             return null;
         }
 
@@ -138,6 +138,10 @@ public class DuelSystem {
                 kit,
                 map
         );
+    }
+
+    public void cancelRequestsForPlayer(UUID playerId) {
+        requestManager.cancelRequestsForPlayer(playerId);
     }
 
     public boolean addPlayerToDuel(Duel duel, UUID playerId) {

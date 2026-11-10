@@ -30,26 +30,18 @@ public class DuelRequestManager {
         return null;
     }
 
-    public DuelRequest createRequest(
-            UUID sender,
-            UUID target,
-            String kit,
-            String map
-    ) {
+    public DuelRequest createRequest(UUID sender, UUID target, String kit, String map) {
         purgeExpiredRequests();
 
-        if (hasRequestWithoutExpiryCheck(sender, target)) {
+        if (sender.equals(target)
+                || hasRequestWithoutExpiryCheck(sender, target)
+                || hasIncomingRequestWithoutExpiryCheck(target)) {
             return null;
         }
 
         DuelRequest request = new DuelRequest(
-                sender,
-                target,
-                kit,
-                map,
-                System.currentTimeMillis()
+                sender, target, kit, map, System.currentTimeMillis()
         );
-
         addRequest(request);
         return request;
     }
@@ -69,9 +61,31 @@ public class DuelRequestManager {
         requests.removeIf(request -> request.getSender().equals(sender));
     }
 
+    public void cancelRequestsForPlayer(UUID playerId) {
+        purgeExpiredRequests();
+        requests.removeIf(request ->
+                request.getSender().equals(playerId)
+                        || request.getTarget().equals(playerId)
+        );
+    }
+
     public boolean hasRequest(UUID sender, UUID target) {
         purgeExpiredRequests();
         return hasRequestWithoutExpiryCheck(sender, target);
+    }
+
+    public boolean hasIncomingRequest(UUID target) {
+        purgeExpiredRequests();
+        return hasIncomingRequestWithoutExpiryCheck(target);
+    }
+
+    private boolean hasIncomingRequestWithoutExpiryCheck(UUID target) {
+        for (DuelRequest request : requests) {
+            if (request.getTarget().equals(target)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean hasRequestWithoutExpiryCheck(UUID sender, UUID target) {
@@ -81,7 +95,6 @@ public class DuelRequestManager {
                 return true;
             }
         }
-
         return false;
     }
 

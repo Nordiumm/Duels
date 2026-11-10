@@ -61,6 +61,10 @@ public class DuelKitMenuListener implements Listener {
                 );
 
                 if (request == null) {
+                    core.getMessageManager().send(
+                            player,
+                            "duel.request-unavailable"
+                    );
                     return;
                 }
 
